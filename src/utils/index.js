@@ -15,7 +15,7 @@ function performOperation(firstValue, operator, secondValue) {
 
 function removeOperator(exp, operator) {
 	const expArray = exp.split(" ");
-	console.log("expArray", expArray);
+	// console.log("expArray", expArray);
 	const answerArray = [];
 	for (let i = 0; i < expArray.length; i++) {
 		if (expArray[i] === operator) {

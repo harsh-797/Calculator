@@ -5,7 +5,10 @@ export default function Operators({ handleOperation }) {
 		<>
 			<Button
 				classList={"button add"}
-				onClick={() => handleOperation("operation", " + ")}>
+				onClick={() => {
+					console.log("i run once");
+					handleOperation("operation", " + ");
+				}}>
 				+
 			</Button>
 			<Button

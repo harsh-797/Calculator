@@ -1,5 +1,10 @@
 import React from "react";
 
+function isOperand(key) {
+	if (key === "+" || key === "-" || key === "/" || key === "X") return true;
+	return false;
+}
+
 function useExpression() {
 	const [expression, setExpression] = React.useState("");
 
@@ -23,8 +28,12 @@ function useExpression() {
 
 	React.useEffect(() => {
 		window.addEventListener("keypress", (e) => {
-			if (e.key === "=") {
+			console.log(e);
+			if (e.key === "=" || e.key === "Enter") {
+				console.log("hi");
 				handleOperation("equals");
+			} else if (isOperand(e.key)) {
+				handleOperation("operation", " " + e.key + " ");
 			} else if (e.key === "") {
 			} else {
 				handleOperation("operation", e.key);
