@@ -28,6 +28,7 @@ function useExpression() {
 
 	React.useEffect(() => {
 		window.addEventListener("keypress", (e) => {
+			e.preventDefault();
 			console.log(e);
 			if (e.key === "=" || e.key === "Enter") {
 				console.log("hi");

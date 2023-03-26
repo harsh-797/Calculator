@@ -33,6 +33,18 @@ function removeOperator(exp, operator) {
 	return answerArray.join(" ");
 }
 
+function findClosingBracket(exp, startingIndex) {
+	let countOfOpenBrackets = 0;
+	for (let i = startingIndex; i < exp.length; i++) {
+		if (exp[i] === "(") countOfOpenBrackets++;
+		else if (exp[i] === ")") {
+			countOfOpenBrackets--;
+			if (countOfOpenBrackets === 0) return i;
+		}
+	}
+	return -1;
+}
+
 function evaluateBracket(exp) {
 	let expClone = exp;
 	// console.log(expClone);
@@ -47,23 +59,46 @@ function evaluateBracket(exp) {
 	return expClone;
 }
 
-function evaluate(exp, initial) {
-	console.log(typeof exp);
-	if (exp.length === 0) return 0;
+function isValidExpression(exp) {
+	if (exp.length === 0) return false;
+	let countBrackets = 0;
+	for (let i = 0; i < exp.length; i++) {
+		if (exp[i] === "(") countBrackets++;
+		else if (exp[i] === ")") {
+			countBrackets--;
+		}
+	}
+	if (countBrackets === 0) return true;
+	return false;
+}
+
+function evaluate(exp) {
+	if (!isValidExpression(exp)) return "";
 
 	const outermostBracketStartsAt = exp.indexOf("(");
-	const outermostBracketEndsAt = exp.lastIndexOf(")");
+	const outermostBracketEndsAt = findClosingBracket(
+		exp,
+		outermostBracketStartsAt
+	);
+
+	// const outermostBracketEndsAt = exp.lastIndexOf(")");
+	console.log(exp);
 
 	let expWithoutBracket = exp;
 	if (outermostBracketStartsAt !== -1) {
 		expWithoutBracket =
-			exp.slice(0, outermostBracketStartsAt) +
+			(exp.slice(0, outermostBracketStartsAt) ?? "") +
 			evaluate(
 				exp.slice(outermostBracketStartsAt + 1, outermostBracketEndsAt)
 			) +
-			exp.slice(outermostBracketEndsAt + 1);
+			" " +
+			(exp[outermostBracketEndsAt + 2] ?? "") +
+			" " +
+			evaluate(exp.slice(outermostBracketEndsAt + 4) ?? "");
 	}
 	return evaluateBracket(expWithoutBracket);
 }
 
 export { evaluate };
+
+// 1 + 9 - 2 X (1 X 3) X (1 + 2)
