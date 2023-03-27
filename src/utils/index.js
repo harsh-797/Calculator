@@ -12,16 +12,22 @@ function performOperation(firstValue, operator, secondValue) {
 			throw new Error("Unknown operaton");
 	}
 }
+function removeOperator(exp, firstOperator, secondOperator) {
+	let expArray = exp.split(" ");
+	expArray = expArray.filter((e) => e);
 
-function removeOperator(exp, operator) {
-	const expArray = exp.split(" ");
-	// console.log("expArray", expArray);
 	const answerArray = [];
 	for (let i = 0; i < expArray.length; i++) {
-		if (expArray[i] === operator) {
+		if (expArray[i] === firstOperator) {
 			answerArray.pop();
 			answerArray.push(
-				performOperation(expArray[i - 1], operator, expArray[i + 1])
+				performOperation(expArray[i - 1], firstOperator, expArray[i + 1])
+			);
+			i++;
+		} else if (expArray[i] === secondOperator) {
+			answerArray.pop();
+			answerArray.push(
+				performOperation(expArray[i - 1], secondOperator, expArray[i + 1])
 			);
 			i++;
 		} else {
@@ -48,13 +54,13 @@ function findClosingBracket(exp, startingIndex) {
 function evaluateBracket(exp) {
 	let expClone = exp;
 	// console.log(expClone);
-	expClone = removeOperator(expClone, "/");
+	expClone = removeOperator(expClone, "/", "X");
 	// console.log(expClone);
-	expClone = removeOperator(expClone, "X");
+	// expClone = removeOperator(expClone, "X");
 	// console.log(expClone);
-	expClone = removeOperator(expClone, "+");
+	expClone = removeOperator(expClone, "+", "-");
 	// console.log(expClone);
-	expClone = removeOperator(expClone, "-");
+	// expClone = removeOperator(expClone, "-");
 	// console.log(expClone);
 	return expClone;
 }
@@ -73,30 +79,54 @@ function isValidExpression(exp) {
 }
 
 function evaluate(exp) {
+	// console.log(exp);
 	if (!isValidExpression(exp)) return "";
 
 	const outermostBracketStartsAt = exp.indexOf("(");
-	const outermostBracketEndsAt = findClosingBracket(
-		exp,
-		outermostBracketStartsAt
-	);
+	// const outermostBracketEndsAt = findClosingBracket(
+	// 	exp,
+	// 	outermostBracketStartsAt
+	// );
 
 	// const outermostBracketEndsAt = exp.lastIndexOf(")");
-	console.log(exp);
+	// console.log(exp);
 
 	let expWithoutBracket = exp;
 	if (outermostBracketStartsAt !== -1) {
-		expWithoutBracket =
-			(exp.slice(0, outermostBracketStartsAt) ?? "") +
-			evaluate(
-				exp.slice(outermostBracketStartsAt + 1, outermostBracketEndsAt)
-			) +
-			" " +
-			(exp[outermostBracketEndsAt + 2] ?? "") +
-			" " +
-			evaluate(exp.slice(outermostBracketEndsAt + 4) ?? "");
+		expWithoutBracket = exp.slice(0, outermostBracketStartsAt);
+		for (let i = 0; i < exp.length; i++) {
+			console.log("inside loop");
+			if (exp[i] === "(") {
+				console.log(i);
+				const closingBracketIndex = findClosingBracket(exp, i);
+				expWithoutBracket = expWithoutBracket + " ";
+				expWithoutBracket =
+					expWithoutBracket + evaluate(exp.slice(i + 1, closingBracketIndex));
+				expWithoutBracket = expWithoutBracket + " ";
+				i = closingBracketIndex;
+			} else if (exp[i] === ")") {
+				console.log(i);
+			} else {
+				console.log(i);
+				expWithoutBracket = expWithoutBracket + exp[i];
+			}
+			// console.log(expWithoutBracket);
+		}
+		// expWithoutBracket =
+		// 	(exp.slice(0, outermostBracketStartsAt) ?? "") +
+		// 	evaluate(
+		// 		exp.slice(outermostBracketStartsAt + 1, outermostBracketEndsAt)
+		// 	) +
+		// 	" " +
+		// 	(exp[outermostBracketEndsAt + 2] ?? "") +
+		// 	" " +
+		// 	evaluate(exp.slice(outermostBracketEndsAt + 4) ?? "");
 	}
-	return evaluateBracket(expWithoutBracket);
+
+	console.log(expWithoutBracket);
+	const result = evaluateBracket(expWithoutBracket);
+	console.log(result);
+	return result;
 }
 
 export { evaluate };
